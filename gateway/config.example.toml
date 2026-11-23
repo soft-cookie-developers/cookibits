@@ -1,0 +1,21 @@
+# Copy to config.toml (gitignored) and adjust for this host.
+
+[server]
+# Keep the gateway on localhost and publish it with `tailscale serve`.
+host = "127.0.0.1"
+port = 8480
+
+[upstream]
+# The vLLM server. It must never be reachable from outside this machine.
+url = "http://127.0.0.1:8000"
+# Seconds to wait for a full response. Long generations need a generous value.
+timeout_s = 600
+
+[limits]
+max_body_bytes = 4194304
+# Cap on logprobs (completions) and top_logprobs (chat).
+max_logprobs = 5
+
+[keys]
+# Relative paths resolve next to this file. Manage with `cookibits-gateway keys`.
+file = "keys.toml"

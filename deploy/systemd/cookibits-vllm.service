@@ -1,0 +1,16 @@
+[Unit]
+Description=Cookibits model server (vLLM)
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/cookibits/host.env
+# vLLM's gloo sockets otherwise bind to a LAN link-local address.
+Environment=GLOO_SOCKET_IFNAME=lo
+ExecStart=/bin/sh -c 'exec "$COOKIBITS_SERVE_SCRIPT"'
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=600
+
+[Install]
+WantedBy=default.target

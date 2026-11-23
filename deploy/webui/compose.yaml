@@ -1,0 +1,38 @@
+# Open WebUI as a gateway client. Copy .env.example to .env (gitignored) first.
+#
+# Host networking lets the container reach the gateway on 127.0.0.1 without
+# exposing the gateway beyond localhost. HOST keeps Open WebUI itself on
+# localhost too; `tailscale serve` publishes it on the tailnet.
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.13.3
+    container_name: cookibits-webui
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ${COOKIBITS_WEBUI_DATA:?set COOKIBITS_WEBUI_DATA in .env}:/app/backend/data
+    environment:
+      HOST: 127.0.0.1
+      PORT: ${COOKIBITS_WEBUI_PORT:-8481}
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:?set WEBUI_SECRET_KEY in .env}
+      WEBUI_URL: ${COOKIBITS_WEBUI_URL:-}
+      # Leave unset to keep Open WebUI's own name. Open WebUI's license allows
+      # a custom name only for deployments of 50 users or fewer.
+      WEBUI_NAME: ${COOKIBITS_WEBUI_NAME:-Open WebUI}
+
+      # Only the gateway; no Ollama.
+      ENABLE_OLLAMA_API: "false"
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_BASE_URL: ${COOKIBITS_GATEWAY_URL:-http://127.0.0.1:8480}/v1
+      OPENAI_API_KEY: ${COOKIBITS_WEBUI_GATEWAY_KEY:?set COOKIBITS_WEBUI_GATEWAY_KEY in .env}
+
+      # Accounts: the first sign-up becomes admin. Everyone after that waits
+      # in the pending role until an admin approves them.
+      ENABLE_SIGNUP: ${COOKIBITS_WEBUI_SIGNUP:-true}
+      DEFAULT_USER_ROLE: pending
+
+      # Lets the gateway log which person sent a request (user id only).
+      ENABLE_FORWARD_USER_INFO_HEADERS: "true"
+
+      ENABLE_VERSION_UPDATE_CHECK: "false"
