@@ -6,7 +6,9 @@
 
 services:
   open-webui:
-    image: ghcr.io/open-webui/open-webui:v0.13.3
+    # Slim image: the models for document chat and voice download on first use
+    # into the data volume instead of being baked into the image.
+    image: ghcr.io/open-webui/open-webui:v0.13.3-slim
     container_name: cookibits-webui
     network_mode: host
     restart: unless-stopped
