@@ -1,0 +1,14 @@
+[Unit]
+Description=Cookibits gateway
+After=cookibits-vllm.service
+Wants=cookibits-vllm.service
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/cookibits/host.env
+ExecStart=/bin/sh -c 'exec "$COOKIBITS_GATEWAY_VENV/bin/cookibits-gateway" serve'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
