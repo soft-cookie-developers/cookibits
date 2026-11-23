@@ -8,6 +8,7 @@ deploy/webui/.env
 # Python
 __pycache__/
 *.egg-info/
+build/
 .venv/
 venv/
 .pytest_cache/
