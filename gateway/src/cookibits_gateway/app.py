@@ -56,6 +56,8 @@ async def _read_body(request: Request, limit: int) -> bytes | None:
 def _log(client: str | None, request: Request, status: int, started: float, note: str = "") -> None:
     record = {
         "client": client,
+        # Set by Open WebUI when it forwards user info. An id, never a name or email.
+        "user": request.headers.get("x-openwebui-user-id"),
         "method": request.method,
         "path": request.url.path,
         "status": status,

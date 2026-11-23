@@ -5,7 +5,9 @@ A self-hosted language model stack: a vLLM model server, an authenticating gatew
 ## Layout
 
 - `gateway/`: the authenticating proxy. See [gateway/README.md](gateway/README.md).
-- `deploy/`: systemd user units and the per-host environment file template.
+- `deploy/systemd/`: user units for the model server and the gateway.
+- `deploy/webui/`: Open WebUI as a gateway client, run with Docker Compose.
+- `deploy/tailscale-serve.sh`: publishes the gateway and Open WebUI on a tailnet over HTTPS.
 
 Machine-specific values (hostnames, addresses, keys, paths) live in gitignored files. Each one has a committed `.example` template.
 

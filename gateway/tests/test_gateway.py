@@ -157,3 +157,16 @@ def test_streams_upstream_body_unchanged(client):
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/event-stream")
     assert r.content == b'data: {"a": 1}\n\ndata: [DONE]\n\n'
+
+
+def test_log_names_client_and_forwarded_user_without_content(client, caplog):
+    caplog.set_level("INFO", logger="cookibits.gateway")
+    client.post(
+        "/v1/chat/completions",
+        json={"messages": [{"role": "user", "content": "secret words"}]},
+        headers=auth(**{"x-openwebui-user-id": "u-123"}),
+    )
+    text = caplog.text
+    assert '"client": "tester"' in text
+    assert '"user": "u-123"' in text
+    assert "secret words" not in text
