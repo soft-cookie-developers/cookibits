@@ -1,16 +1,21 @@
 [Unit]
 Description=Cookibits model server (vLLM)
 After=network-online.target
+# A crash loop (for example a repeated out-of-memory) stops after three
+# failures in five minutes and shows as failed, instead of retrying forever.
+StartLimitIntervalSec=300
+StartLimitBurst=3
 
 [Service]
-Type=simple
+# The serve script must exec vLLM in the foreground; systemd supervises it.
+Type=exec
 EnvironmentFile=%h/.config/cookibits/host.env
 # vLLM's gloo sockets otherwise bind to a LAN link-local address.
 Environment=GLOO_SOCKET_IFNAME=lo
 ExecStart=/bin/sh -c 'exec "$COOKIBITS_SERVE_SCRIPT"'
 Restart=on-failure
 RestartSec=10
-TimeoutStartSec=600
+TimeoutStopSec=60
 
 [Install]
 WantedBy=default.target

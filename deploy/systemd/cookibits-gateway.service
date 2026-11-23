@@ -2,13 +2,16 @@
 Description=Cookibits gateway
 After=cookibits-vllm.service
 Wants=cookibits-vllm.service
+StartLimitIntervalSec=300
+StartLimitBurst=3
 
 [Service]
-Type=simple
+Type=exec
 EnvironmentFile=%h/.config/cookibits/host.env
 ExecStart=/bin/sh -c 'exec "$COOKIBITS_GATEWAY_VENV/bin/cookibits-gateway" serve'
 Restart=on-failure
 RestartSec=5
+TimeoutStopSec=30
 
 [Install]
 WantedBy=default.target
